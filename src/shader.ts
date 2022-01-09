@@ -1,3 +1,5 @@
+type UniformVariable = number | number[] | bigint | Object;
+
 export class Shader {
   gl: WebGL2RenderingContext | null = null;
   program: WebGLProgram | null = null;
@@ -6,10 +8,14 @@ export class Shader {
 
   constructor(public fragmentShader: string, public vertexShader: string) {}
 
+  clone(): Shader {
+    return new Shader(this.fragmentShader, this.vertexShader).use(this.gl);
+  }
+
   private shader(type: number, code: string): WebGLShader {
     const { gl } = this;
     if (!gl) {
-      throw new Error("no context");
+      throw new Error('no context');
     }
     const sh = gl.createShader(type);
     if (!sh) {
@@ -27,7 +33,7 @@ export class Shader {
   private createProgram(vs: WebGLShader, fs: WebGLShader): WebGLProgram {
     const { gl } = this;
     if (!gl) {
-      throw new Error("no gl context");
+      throw new Error('no gl context');
     }
     const program = gl.createProgram();
     if (!program) {
@@ -43,8 +49,11 @@ export class Shader {
     return program;
   }
 
-  use(gl: WebGL2RenderingContext) {
+  use(gl: WebGL2RenderingContext | null) {
     this.gl = gl;
+    if (!gl) {
+      return this;
+    }
     if (!this.program) {
       this.compile();
     }
@@ -89,7 +98,14 @@ export class Shader {
     return this;
   }
 
-  uniform(name: string, value: number | number[]): Shader {
+  uniforms(vars: Record<string, UniformVariable>): Shader {
+    for (const [key, val] of Object.entries(vars)) {
+      this.uniform(key, val);
+    }
+    return this;
+  }
+
+  uniform(name: string, value: UniformVariable): Shader {
     const { gl, program } = this;
     if (!gl || !program) {
       return this;
@@ -99,21 +115,29 @@ export class Shader {
       return this;
     }
     if (value instanceof Array) {
-      if (value.length === 1) {
-        gl.uniform1fv(loc, value);
+      if (value.length === 1 && typeof value[0] === 'number') {
+        gl.uniform1fv(loc, value as number[]);
       }
-      if (value.length === 2) {
-        gl.uniform2fv(loc, value);
+      if (value.length === 2 && typeof value[0] === 'number') {
+        gl.uniform2fv(loc, value as number[]);
       }
-      if (value.length === 3) {
-        gl.uniform3fv(loc, value);
+      if (value.length === 3 && typeof value[0] === 'number') {
+        gl.uniform3fv(loc, value as number[]);
       }
-      if (value.length === 4) {
-        gl.uniform4fv(loc, value);
+      if (value.length === 4 && typeof value[0] === 'number') {
+        gl.uniform4fv(loc, value as number[]);
       }
       return this;
     }
-    gl.uniform1f(name, value);
+    if (value instanceof Object) {
+      value = value.valueOf();
+    }
+    if (typeof value === 'bigint') {
+      gl.uniform1i(name, Number(value));
+    }
+    if (typeof value === 'number') {
+      gl.uniform1f(name, value);
+    }
     return this;
   }
 

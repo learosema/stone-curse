@@ -10,7 +10,7 @@ export class Texture {
   minFilter = WebGL2RenderingContext.NEAREST;
   magFilter = WebGL2RenderingContext.NEAREST;
 
-  constructor(public url = "") {}
+  constructor(public url = '') {}
 
   load(url?: string): Promise<Texture> {
     return new Promise((resolve, reject) => {
@@ -18,7 +18,7 @@ export class Texture {
         this.url = url;
       }
       const img = new Image();
-      img.crossOrigin = "anonymous";
+      img.crossOrigin = 'anonymous';
       img.src = this.url;
       img.onload = () => {
         this.imageSource = img;
@@ -36,10 +36,10 @@ export class Texture {
   public upload(textureIndex = 0) {
     const { gl } = this;
     if (!gl) {
-      throw new Error("no webgl context");
+      throw new Error('no webgl context');
     }
     if (!this.imageSource) {
-      throw new Error("no image data there yet.");
+      throw new Error('no image data there yet.');
     }
     // upload sprites to GPU
     const texture = gl.createTexture();
@@ -68,6 +68,10 @@ export class Texture {
 
     this.texture = texture;
     this.index = textureIndex;
+  }
+
+  valueOf() {
+    return BigInt(this.index);
   }
 
   delete() {

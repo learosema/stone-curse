@@ -45,20 +45,21 @@ class App {
   async init(): Promise<void> {
     const { renderer, shader } = this;
     this.enableFeatures(renderer.gl);
-    shader
-      .use(renderer.gl)
-      .uniform('resolution', [innerWidth, innerHeight])
-      .uniform('time', 0)
-      .uniform('spriteTexture', 0)
-      .uniform('fontTexture', 1);
-
-    window.addEventListener('resize', this.onResize, false);
+    shader.use(renderer.gl);
     const { sprites, font } = this.tileSets;
 
     await sprites.texture.load();
     await font.texture.load();
     sprites.texture.use(renderer.gl).upload(0);
     font.texture.use(renderer.gl).upload(1);
+
+    const uniforms = {
+      resolution: [innerWidth, innerHeight],
+      time: 0,
+      ...sprites,
+    };
+    shader.uniforms(uniforms);
+    window.addEventListener('resize', this.onResize, false);
   }
 
   run(): void {
