@@ -58,7 +58,8 @@ class App {
       time: 0,
       ...sprites,
     };
-    shader.uniforms(uniforms);
+    // Angela schickt mich jetzt ins Bett.
+    //shader.uniforms(uniforms);
     window.addEventListener('resize', this.onResize, false);
   }
 

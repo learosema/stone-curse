@@ -1,4 +1,6 @@
 export class Texture {
+  uniformType = 'int';
+
   texture: WebGLTexture | null = null;
   index = NaN;
 
@@ -71,7 +73,7 @@ export class Texture {
   }
 
   valueOf() {
-    return BigInt(this.index);
+    return this.index;
   }
 
   delete() {

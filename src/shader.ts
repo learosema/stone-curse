@@ -1,4 +1,5 @@
-type UniformVariable = number | number[] | bigint | Object;
+type UniformObject = { uniformType?: 'float' | 'int' | 'matrix' };
+type UniformVariable = number | number[] | UniformObject;
 
 export class Shader {
   gl: WebGL2RenderingContext | null = null;
@@ -107,6 +108,18 @@ export class Shader {
 
   uniform(name: string, value: UniformVariable): Shader {
     const { gl, program } = this;
+    let type = 'float';
+    if (value instanceof Object && value instanceof Array === false) {
+      type = (value as UniformObject).uniformType || 'float';
+      const newVal = value.valueOf();
+      if (type === 'int') {
+        return this.uniformInt(name, newVal as number | number[]);
+      }
+      if (type === 'matrix') {
+        return this.uniformMatrix(name, newVal as number[]);
+      }
+      return this.uniform(name, newVal as number | number[]);
+    }
     if (!gl || !program) {
       return this;
     }
@@ -115,23 +128,21 @@ export class Shader {
       return this;
     }
     if (value instanceof Array) {
-      if (value.length === 1 && typeof value[0] === 'number') {
-        gl.uniform1fv(loc, value as number[]);
+      if (value.length === 1) {
+        gl.uniform1fv(loc, value);
       }
-      if (value.length === 2 && typeof value[0] === 'number') {
-        gl.uniform2fv(loc, value as number[]);
+      if (value.length === 2) {
+        gl.uniform2fv(loc, value);
       }
-      if (value.length === 3 && typeof value[0] === 'number') {
-        gl.uniform3fv(loc, value as number[]);
+      if (value.length === 3) {
+        gl.uniform3fv(loc, value);
       }
-      if (value.length === 4 && typeof value[0] === 'number') {
-        gl.uniform4fv(loc, value as number[]);
+      if (value.length === 4) {
+        gl.uniform4fv(loc, value);
       }
       return this;
     }
-    if (value instanceof Object) {
-      value = value.valueOf();
-    }
+
     if (typeof value === 'bigint') {
       gl.uniform1i(name, Number(value));
     }
