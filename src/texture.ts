@@ -1,5 +1,7 @@
-export class Texture {
-  uniformType = 'int';
+import { UniformObject, UniformVariableType } from './shader';
+
+export class Texture implements UniformObject {
+  readonly uniformType: UniformVariableType = 'int';
 
   texture: WebGLTexture | null = null;
   index = NaN;

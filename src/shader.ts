@@ -1,5 +1,9 @@
-type UniformObject = { uniformType?: 'float' | 'int' | 'matrix' };
-type UniformVariable = number | number[] | UniformObject;
+export type UniformVariableType = 'float' | 'int' | 'matrix';
+export interface UniformObject {
+  readonly uniformType?: UniformVariableType;
+}
+
+export type UniformVariable = number | number[] | UniformObject;
 
 export class Shader {
   gl: WebGL2RenderingContext | null = null;
@@ -141,10 +145,6 @@ export class Shader {
         gl.uniform4fv(loc, value);
       }
       return this;
-    }
-
-    if (typeof value === 'bigint') {
-      gl.uniform1i(name, Number(value));
     }
     if (typeof value === 'number') {
       gl.uniform1f(name, value);

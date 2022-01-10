@@ -1,6 +1,6 @@
 import { BufferAttrib } from './buffer-attrib';
 import { Renderer } from './renderer';
-import { Shader } from './shader';
+import { Shader, UniformVariable } from './shader';
 import { Texture } from './texture';
 
 import fragmentShader from './sprite.frag';
@@ -12,6 +12,7 @@ const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 class App {
   animationFrame = -1;
   shader = new Shader(fragmentShader, vertexShader);
+  uniforms: Record<string, UniformVariable> = {};
   buffers: Record<string, BufferAttrib> = {
     position: new BufferAttrib('position', 3),
     sprite: new BufferAttrib('sprite', 3),
@@ -53,13 +54,12 @@ class App {
     sprites.texture.use(renderer.gl).upload(0);
     font.texture.use(renderer.gl).upload(1);
 
-    const uniforms = {
+    this.uniforms = {
       resolution: [innerWidth, innerHeight],
       time: 0,
       ...sprites,
     };
-    // Angela schickt mich jetzt ins Bett.
-    //shader.uniforms(uniforms);
+    shader.uniforms(this.uniforms);
     window.addEventListener('resize', this.onResize, false);
   }
 
