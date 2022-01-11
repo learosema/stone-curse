@@ -21,5 +21,5 @@ void main() {
   float row = floor(vSpriteIndex / tilesPerRow) * tileSize;
   vec2 uv = gl_PointCoord.xy * vec2(tileSize / tileMapSize) + vec2(col, row) / tileMapSize;
   vec4 color = texture(tileMap, uv);
-  fragColor = vec4(1., 0., 0., 1.);
+  fragColor = color;
 }

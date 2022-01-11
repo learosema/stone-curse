@@ -65,6 +65,7 @@ class App {
       ...sprites,
     };
     shader.uniforms(this.uniforms);
+    this.onResize();
     window.addEventListener('resize', this.onResize, false);
   }
 
@@ -109,7 +110,9 @@ class App {
       !positionBuffer.data ||
       positionBuffer.data.length !== 4 * xLen * yLen
     ) {
+      console.log('creating new buffer', xLen, yLen);
       positionBuffer.data = new Float32Array(4 * xLen * yLen);
+      console.log(positionBuffer.data);
     }
     for (let y = 0; y < yLen; y++) {
       for (let x = 0; x < xLen; x++) {
@@ -120,7 +123,8 @@ class App {
         positionBuffer.data[offset + 3] = (x + y) % 8;
       }
     }
-
+    positionBuffer.update().enable();
+    console.log(positionBuffer.data);
     renderer.render(
       shader,
       Object.values(buffers),

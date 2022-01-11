@@ -1,5 +1,5 @@
-import { BufferAttrib } from "./buffer-attrib";
-import { Shader } from "./shader";
+import { BufferAttrib } from './buffer-attrib';
+import { Shader } from './shader';
 
 export class Renderer {
   gl: WebGL2RenderingContext;
@@ -25,9 +25,9 @@ export class Renderer {
     gl?: WebGL2RenderingContext
   ): WebGL2RenderingContext {
     if (!gl) {
-      const newContext = canvas?.getContext("webgl2");
+      const newContext = canvas?.getContext('webgl2');
       if (!newContext) {
-        throw new Error("webgl2 not supported");
+        throw new Error('webgl2 not supported');
       }
       gl = newContext;
     }
@@ -50,6 +50,7 @@ export class Renderer {
       buffer.enable();
     }
     const { count, indexType } = BufferAttrib.getCount(buffers);
+    console.log(buffers, count);
     if (indexType !== WebGL2RenderingContext.NONE) {
       gl.drawElements(mode, count, indexType, 0);
     } else {

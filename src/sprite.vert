@@ -17,7 +17,7 @@ uniform vec2 resolution;
 void main() {
   // calculate pixel coords to webgl space coords.
   float size = position.z;
-  vec2 glPosition = vec2(position.x / (resolution.x * 2.) - 1., 1. - position.y / (resolution.y * 2.)) + vec2(size / 2.);
+  vec2 glPosition = vec2(position.x * 2. / resolution.x - 1., 1. - position.y * 2. / resolution.y) + vec2(size / 2.) / resolution;
 
 
   vPosition = glPosition;
