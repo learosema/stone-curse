@@ -147,7 +147,7 @@ export class Shader {
       return this;
     }
     if (typeof value === 'number') {
-      gl.uniform1f(name, value);
+      gl.uniform1f(loc, value);
     }
     return this;
   }
@@ -176,7 +176,7 @@ export class Shader {
       }
       return this;
     }
-    gl.uniform1i(name, value);
+    gl.uniform1i(loc, value);
     return this;
   }
 

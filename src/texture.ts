@@ -16,6 +16,14 @@ export class Texture implements UniformObject {
 
   constructor(public url = '') {}
 
+  get width(): number {
+    return this.imageSource?.width || NaN;
+  }
+
+  get height(): number {
+    return this.imageSource?.height || NaN;
+  }
+
   load(url?: string): Promise<Texture> {
     return new Promise((resolve, reject) => {
       if (url) {

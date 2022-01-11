@@ -1,8 +1,9 @@
-import { Texture } from "./texture";
+import { Texture } from './texture';
 
 export type TileSet = {
-  texture: Texture;
-  tileSize: [number, number];
+  tileMap: Texture;
+  tileMapSize: [number, number];
+  tileSize: number;
   numTiles: number;
   tilesPerRow: number;
   textureIndex?: number;
