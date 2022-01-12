@@ -92,27 +92,25 @@ class App {
   loop = (): void => {
     this.drawFrame();
     if (this.animationFrame > -1) {
-      // this.animationFrame = requestAnimationFrame(this.loop);
-      this.animationFrame = -1;
+      this.animationFrame = requestAnimationFrame(this.loop);
+      // this.animationFrame = -1;
     }
   };
 
   drawFrame(): void {
     const { renderer, shader, buffers } = this;
-
+    const clock = performance.now() * 1e-3;
     const { width, height } = renderer.dimensions;
     const { tileSize } = this.tileSets.sprites;
     const zoom = this.zoom || 4;
-    const xLen = (width / (tileSize * zoom)) | 0;
-    const yLen = (height / (tileSize * zoom)) | 0;
+    const xLen = Math.round(width / (tileSize * zoom)) + 1;
+    const yLen = Math.round(height / (tileSize * zoom)) + 2;
     const positionBuffer = this.buffers.position;
     if (
       !positionBuffer.data ||
       positionBuffer.data.length !== 4 * xLen * yLen
     ) {
-      console.log('creating new buffer', xLen, yLen);
       positionBuffer.data = new Float32Array(4 * xLen * yLen);
-      console.log(positionBuffer.data);
     }
     for (let y = 0; y < yLen; y++) {
       for (let x = 0; x < xLen; x++) {
@@ -120,11 +118,15 @@ class App {
         positionBuffer.data[offset + 0] = x * tileSize * zoom;
         positionBuffer.data[offset + 1] = y * tileSize * zoom;
         positionBuffer.data[offset + 2] = tileSize * zoom;
-        positionBuffer.data[offset + 3] = (x + y) % 8;
+        positionBuffer.data[offset + 3] = Math.round(
+          3.5 +
+            3.5 *
+              (Math.sin(x * 2 - clock * 0.1) * Math.cos(y * 2 + clock * 0.1))
+        );
       }
     }
     positionBuffer.update().enable();
-    console.log(positionBuffer.data);
+    shader.uniform('time', clock);
     renderer.render(
       shader,
       Object.values(buffers),
