@@ -1,13 +1,13 @@
-import esbuild from "esbuild";
-import { glsl } from "esbuild-plugin-glsl";
+const esbuild = require('esbuild');
+const { glsl } = require('esbuild-plugin-glsl');
 
 esbuild
   .build({
-    entryPoints: ["src/index.ts"],
+    entryPoints: ['src/index.ts'],
     bundle: true,
-    format: "esm",
+    format: 'esm',
     minify: false,
-    outdir: "dist",
+    outdir: 'dist',
     plugins: [glsl({ minify: true })],
   })
   .catch(() => process.exit(1));
