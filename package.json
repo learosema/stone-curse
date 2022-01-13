@@ -10,8 +10,9 @@
     "test": "jest",
     "build:types": "tsc -d --emitDeclarationOnly",
     "build:js": "node build",
+    "build:assets": "cp src/*.{html,css,png} dist",
     "build:docs": "npx typedoc src/index.ts && touch docs/.nojekyll",
-    "build": "rm -rf dist && npm run build:types -s && npm run build:js -s",
+    "build": "rm -rf dist && npm run build:assets -s && npm run build:types -s && npm run build:js -s",
     "prepublishOnly": "npm run lint -s && npm test -s && npm run build",
     "semantic-release": "semantic-release"
   },
