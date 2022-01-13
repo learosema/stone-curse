@@ -1,11 +1,11 @@
-import { BufferAttrib } from './buffer-attrib';
-import { Renderer } from './renderer';
-import { Shader, UniformVariable } from './shader';
-import { Texture } from './texture';
+import { BufferAttrib } from './webgl/buffer-attrib';
+import { Renderer } from './webgl/renderer';
+import { Shader, UniformVariable } from './webgl/shader';
+import { Texture } from './webgl/texture';
+import { TileSet } from './webgl/types';
 
-import fragmentShader from './sprite.frag';
-import vertexShader from './sprite.vert';
-import { TileSet } from './types';
+import fragmentShader from './shaders/sprite.frag';
+import vertexShader from './shaders/sprite.vert';
 
 const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 
@@ -19,14 +19,14 @@ class App {
 
   tileSets: Record<string, TileSet> = {
     sprites: {
-      tileMap: new Texture('webgl-sprites.png'),
-      tileMapSize: [256, 16],
+      tileMap: new Texture('img/webgl-sprites.png'),
+      tileMapSize: [128, 16],
       tileSize: 16,
       tilesPerRow: 8,
       numTiles: 8,
     },
     font: {
-      tileMap: new Texture('font-8x8.png'),
+      tileMap: new Texture('img/font-8x8.png'),
       tileSize: 8,
       tilesPerRow: 8,
       numTiles: 256,
