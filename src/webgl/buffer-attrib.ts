@@ -4,6 +4,7 @@ export class BufferAttrib {
   buffer: WebGLBuffer | null = null;
   gl: WebGL2RenderingContext | null = null;
   program: WebGLProgram | null = null;
+  attribLocation = -1;
 
   constructor(
     public name: string | null,
@@ -101,16 +102,16 @@ export class BufferAttrib {
     if (!this.name) {
       return this;
     }
-    const loc = gl.getAttribLocation(program, this.name);
+    this.attribLocation = gl.getAttribLocation(program, this.name);
     gl.vertexAttribPointer(
-      loc,
+      this.attribLocation,
       this.size,
       this.type,
       this.normalized,
       this.offset,
       this.stride
     );
-    gl.enableVertexAttribArray(loc);
+    gl.enableVertexAttribArray(this.attribLocation);
     return this;
   }
 
@@ -119,9 +120,7 @@ export class BufferAttrib {
     if (!gl || !program || !this.name) {
       return this;
     }
-    gl.useProgram(program);
-    const loc = gl.getAttribLocation(program, this.name);
-    gl.disableVertexAttribArray(loc);
+    gl.disableVertexAttribArray(this.attribLocation);
     return this;
   }
 
