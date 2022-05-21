@@ -28,7 +28,7 @@ export class App {
     await Promise.all([
       this.levelRenderer.init(), 
       this.textRenderer.init(),
-      this.levels.load('levels/level-01.txt')
+      this.level.load('levels/level-01.txt')
     ]);
     this.onResize();
     window.addEventListener('resize', this.onResize, false);
@@ -53,7 +53,8 @@ export class App {
   };
 
   loop = (): void => {
-    this.levelRenderer.drawFrame();
+    const { level, levelRenderer } = this;
+    levelRenderer.drawFrame(level);
     if (this.animationFrame > -1) {
       this.animationFrame = requestAnimationFrame(this.loop);
     }

@@ -45,7 +45,7 @@ export class LevelRenderer {
     shader.uniform('resolution', [innerWidth, innerHeight]);
   }
 
-  drawFrame(level: Level, center: Point): void {
+  drawFrame(level: Level, center?: Point): void {
     const { renderer, shader, buffers } = this;
     const clock = performance.now() * 1e-3;
     const { width, height } = renderer.dimensions;
@@ -60,7 +60,7 @@ export class LevelRenderer {
     ) {
       positionBuffer.data = new Float32Array(4 * xLen * yLen);
     }
-    const p: Point = {x: 0, y: 0}; 
+    const p: Point = {x: center?.x || 0, y: 0}; 
     for (let y = 0; y < yLen; y++) {
       for (let x = 0; x < xLen; x++) {
         const offset = 4 * (y * xLen + x);
