@@ -60,7 +60,7 @@ export class LevelRenderer {
     ) {
       positionBuffer.data = new Float32Array(4 * xLen * yLen);
     }
-    const p: Point = {x: center?.x || 0, y: 0}; 
+    const p: Point = {x: center?.x || 0, y: center?.y || 0}; 
     let count = 0;
     for (let y = 0; y < yLen; y++) {
       for (let x = 0; x < xLen; x++) {
