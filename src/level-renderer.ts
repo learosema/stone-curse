@@ -61,13 +61,19 @@ export class LevelRenderer {
       positionBuffer.data = new Float32Array(4 * xLen * yLen);
     }
     const p: Point = {x: center?.x || 0, y: 0}; 
+    let count = 0;
     for (let y = 0; y < yLen; y++) {
       for (let x = 0; x < xLen; x++) {
-        const offset = 4 * (y * xLen + x);
+        const field = level.getField(x + p.x, y + p.y) - 1;
+        if (field < 0) {
+          continue;
+        }
+        const offset = count * 4;
         positionBuffer.data[offset + 0] = x * tileSize * zoom;
         positionBuffer.data[offset + 1] = y * tileSize * zoom;
         positionBuffer.data[offset + 2] = tileSize * zoom;
-        positionBuffer.data[offset + 3] = level.getField(x + p.x, y + p.y);
+        positionBuffer.data[offset + 3] = field;
+        count++;
       }
     }
     positionBuffer.update().enable();
@@ -75,7 +81,8 @@ export class LevelRenderer {
     renderer.render(
       shader,
       Object.values(buffers),
-      WebGL2RenderingContext.POINTS
+      WebGL2RenderingContext.POINTS,
+      count
     );
   }
 

@@ -38,6 +38,7 @@ export class Renderer {
     shader: Shader,
     buffers: BufferAttrib[],
     mode = WebGL2RenderingContext.TRIANGLES,
+    countOverride = NaN,
     updateBuffers = true
   ) {
     const { gl } = this;
@@ -51,9 +52,9 @@ export class Renderer {
     }
     const { count, indexType } = BufferAttrib.getCount(buffers);
     if (indexType !== WebGL2RenderingContext.NONE) {
-      gl.drawElements(mode, count, indexType, 0);
+      gl.drawElements(mode, countOverride || count, indexType, 0);
     } else {
-      gl.drawArrays(mode, 0, count);
+      gl.drawArrays(mode, 0, countOverride || count);
     }
     for (const buffer of buffers) {
       buffer.disable();
