@@ -17,6 +17,7 @@ export class Level {
   }
   
   getField(x: number, y: number) {
+    const { level } = this;
     const yMax = level.length - 1;
     return y < 0 || y > yMax ? 1 : (level[y][x] || 1);
   }
