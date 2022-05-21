@@ -1,6 +1,7 @@
 import { LevelRenderer } from './level-renderer';
 import { TextRenderer } from './text-renderer';
 import { Renderer } from './webgl/renderer';
+import { Level } from './level';
 
 export class App {
   animationFrame = -1;
@@ -8,7 +9,8 @@ export class App {
   renderer: Renderer;
   levelRenderer: LevelRenderer;
   textRenderer: TextRenderer;
-
+  level: Level = new Level();
+  
   constructor(public canvas: HTMLCanvasElement) {
     this.renderer = new Renderer(canvas);
     this.levelRenderer = new LevelRenderer(this.renderer);
@@ -23,7 +25,11 @@ export class App {
   async init(): Promise<void> {
     const { renderer } = this;
     this.enableFeatures(renderer.gl);
-    await Promise.all([this.levelRenderer.init(), this.textRenderer.init()]);
+    await Promise.all([
+      this.levelRenderer.init(), 
+      this.textRenderer.init()
+      this.levels.load('levels/level-01.txt')
+    ]);
     this.onResize();
     window.addEventListener('resize', this.onResize, false);
   }
