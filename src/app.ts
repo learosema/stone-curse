@@ -27,7 +27,7 @@ export class App {
     this.enableFeatures(renderer.gl);
     await Promise.all([
       this.levelRenderer.init(), 
-      this.textRenderer.init()
+      this.textRenderer.init(),
       this.levels.load('levels/level-01.txt')
     ]);
     this.onResize();
