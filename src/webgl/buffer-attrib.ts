@@ -3,12 +3,11 @@ type BufferData = Uint8Array | Uint16Array | Uint32Array | Float32Array;
 export class BufferAttrib {
   buffer: WebGLBuffer | null = null;
   gl: WebGL2RenderingContext | null = null;
-  program: WebGLProgram | null = null;
-  attribLocation = -1;
 
   constructor(
     public name: string | null,
     public size: number,
+    public attribLocation = -1,
     public data: BufferData | null = null,
     public type = WebGL2RenderingContext.FLOAT,
     public normalized = false,
@@ -52,21 +51,17 @@ export class BufferAttrib {
     return { count, indexType };
   }
 
-  use({
-    gl,
-    program,
-  }: {
-    gl: WebGL2RenderingContext | null;
-    program: WebGLProgram | null;
-  }) {
+  use(gl: WebGLRenderingContext) {
     this.gl = gl;
-    this.program = program;
-    if (gl) {
-      gl.useProgram(program);
-    }
     return this;
   }
-
+  
+  bindLocation(program: WebGLProgram): BufferAttrib {
+    const { gl, attribLocation, name } = this;
+    gl?.bindAttribLocation(program, attribLocation, name);
+    return this;
+  }
+  
   update(
     data:
       | Uint16Array
@@ -95,14 +90,12 @@ export class BufferAttrib {
   }
 
   enable() {
-    const { gl, program } = this;
-    if (!gl || !program) {
+    if (!gl) {
       return this;
     }
     if (!this.name) {
       return this;
     }
-    this.attribLocation = gl.getAttribLocation(program, this.name);
     gl.vertexAttribPointer(
       this.attribLocation,
       this.size,
@@ -116,8 +109,8 @@ export class BufferAttrib {
   }
 
   disable() {
-    const { gl, program } = this;
-    if (!gl || !program || !this.name) {
+    const { gl } = this;
+    if (!gl) {
       return this;
     }
     gl.disableVertexAttribArray(this.attribLocation);
@@ -130,6 +123,5 @@ export class BufferAttrib {
       this.gl.deleteBuffer(this.buffer);
     }
     this.gl = null;
-    this.program = null;
   }
 }

@@ -4,29 +4,18 @@ import { Shader, UniformVariable } from './shader';
 export class VertexArray {
 
   vao: WebGLVertexArrayObject;
-  gl: WebGL2RenderingContext;
-  shader: Shader;
-   attributes: Record<string, BufferAttrib> = {};
-  uniforms: Record<string, UniformVariable> = {};
-
-  init(
+  attributes: Record<string, BufferAttrib> = {};
+  
+  constructor(
     gl: WebGL2RenderingContext,
-    shader: Shader, 
     attribs: BufferAttrib[]|null = null,
-    uniforms: Record<String, UniformVariable>|null = null
-  ): VertexArray {  
+  ) {  
     const vao = gl.createVertexArray();
     this.vao = vao;
     this.gl = gl;
-    shader.use(gl);
     if (attribs instanceof Array) {
       this.setAttributes(attribs)
     }
-    if (uniforms !== null) {
-      Object.assign(this.uniforms, uniforms)
-      shader.uniforms(this.uniforms);
-    }
-    return this;
   }
 
   get count() {
@@ -34,16 +23,14 @@ export class VertexArray {
   }
 
   setAttributes(attribs: BufferAttrib[]): VertexArray {
-    const { gl, program } = this.shader;
-        this.use();
+    const { gl } = this;
+    this.use();
     for (const attrib of attribs) {
       if (this.attributes[attrib.name]) {
         this.attributes[attrib.name].dispose();
       }
       this.attributes[attrib.name] = attrib;
-      if (gl && program) {
-        attrib.use({gl, program}).enable();
-      }
+      attrib.enable();
     }
     return this;
   }
@@ -51,6 +38,12 @@ export class VertexArray {
   use(): VertexArray { 
     const { gl } = this;
     gl?.bindVertexArray(vao);
+    return this;
+  }
+  
+  unuse() {
+    const { gl } = this;
+    gl?.bindVertexArray(null);
     return this;
   }
   

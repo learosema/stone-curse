@@ -11,10 +11,18 @@ export class Shader {
   vertexShaderObject: WebGLShader | null = null;
   fragmentShaderObject: WebGLShader | null = null;
 
-  constructor(public fragmentShader: string, public vertexShader: string) {}
+  constructor(
+    public fragmentShader: string,
+    public vertexShader: string,
+    public attribLocations: Record<string, number>|null
+  ) {}
 
   clone(): Shader {
-    return new Shader(this.fragmentShader, this.vertexShader).use(this.gl);
+    return new Shader(
+      this.fragmentShader, 
+      this.vertexShader,
+      this.attribLocations
+    ).use(this.gl);
   }
 
   private shader(type: number, code: string): WebGLShader {
@@ -35,7 +43,7 @@ export class Shader {
     return sh;
   }
 
-  private createProgram(vs: WebGLShader, fs: WebGLShader): WebGLProgram {
+  private createProgram(vs: WebGLShader, fs: WebGLShader, attribLocations: Record<string, number>|null = null;): WebGLProgram {
     const { gl } = this;
     if (!gl) {
       throw new Error('no gl context');
@@ -53,7 +61,7 @@ export class Shader {
     gl.useProgram(program);
     return program;
   }
-
+  
   use(gl: WebGL2RenderingContext | null) {
     this.gl = gl;
     if (!gl) {
@@ -113,6 +121,9 @@ export class Shader {
   uniform(name: string, value: UniformVariable): Shader {
     const { gl, program } = this;
     let type = 'float';
+    if (!gl || !program) {
+      return this;
+    }
     if (value instanceof Object && value instanceof Array === false) {
       type = (value as UniformObject).uniformType || 'float';
       const newVal = value.valueOf();
@@ -123,9 +134,6 @@ export class Shader {
         return this.uniformMatrix(name, newVal as number[]);
       }
       return this.uniform(name, newVal as number | number[]);
-    }
-    if (!gl || !program) {
-      return this;
     }
     const loc = gl.getUniformLocation(program, name);
     if (!loc || loc === -1) {
