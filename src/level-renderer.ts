@@ -17,7 +17,7 @@ export class LevelRenderer {
     numTiles: 8,
   };
 
-  shader = new Shader(fragmentShader, vertexShader);
+  shader = new Shader(fragmentShader, vertexShader, {});
   uniforms: Record<string, UniformVariable> = {};
   buffers: Record<string, BufferAttrib> = {
     position: new BufferAttrib('position', 4),
@@ -60,7 +60,7 @@ export class LevelRenderer {
     ) {
       positionBuffer.data = new Float32Array(4 * xLen * yLen);
     }
-    const p: Point = {x: center?.x || 0, y: center?.y || 0}; 
+    const p: Point = {x: center?.x || 0, y: center?.y || 0};
     let count = 0;
     for (let y = 0; y < yLen; y++) {
       for (let x = 0; x < xLen; x++) {

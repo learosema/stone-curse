@@ -3,6 +3,8 @@ type BufferData = Uint8Array | Uint16Array | Uint32Array | Float32Array;
 export class BufferAttrib {
   buffer: WebGLBuffer | null = null;
   gl: WebGL2RenderingContext | null = null;
+  indexType: number = NaN;
+  count: number = NaN;
 
   constructor(
     public name: string | null,
@@ -13,11 +15,16 @@ export class BufferAttrib {
     public normalized = false,
     public offset = 0,
     public stride = 0,
-    public usage = WebGL2RenderingContext.DYNAMIC_DRAW,
-    public target = WebGL2RenderingContext.ARRAY_BUFFER
+    public usage: number = WebGL2RenderingContext.DYNAMIC_DRAW,
+    public target: number = WebGL2RenderingContext.ARRAY_BUFFER
   ) {
     if (name === null) {
+      // If the name is not set, imply it's an index buffer
       this.target = WebGL2RenderingContext.ELEMENT_ARRAY_BUFFER;
+      this.indexType = this.getIndexType();
+      this.count = this.data?.length || 0;
+    } else {
+      this.count = Math.floor((this.data?.length || 0) / this.size);
     }
   }
 
@@ -26,7 +33,7 @@ export class BufferAttrib {
     indexType: number;
   } {
     let count = 0;
-    let indexType = WebGL2RenderingContext.NONE;
+    let indexType: number = WebGL2RenderingContext.NONE;
     for (const buffer of buffers) {
       if (!buffer.data) {
         continue;
@@ -51,17 +58,17 @@ export class BufferAttrib {
     return { count, indexType };
   }
 
-  use(gl: WebGLRenderingContext) {
+  use(gl: WebGL2RenderingContext) {
     this.gl = gl;
     return this;
   }
-  
+
   bindLocation(program: WebGLProgram): BufferAttrib {
     const { gl, attribLocation, name } = this;
-    gl?.bindAttribLocation(program, attribLocation, name);
+    gl?.bindAttribLocation(program, attribLocation, name!);
     return this;
   }
-  
+
   update(
     data:
       | Uint16Array
@@ -90,6 +97,7 @@ export class BufferAttrib {
   }
 
   enable() {
+    const { gl } = this;
     if (!gl) {
       return this;
     }
@@ -123,5 +131,18 @@ export class BufferAttrib {
       this.gl.deleteBuffer(this.buffer);
     }
     this.gl = null;
+  }
+
+  private getIndexType() {
+    if (this.data instanceof Uint8Array) {
+      return WebGL2RenderingContext.UNSIGNED_BYTE;
+    }
+    if (this.data instanceof Uint16Array) {
+      return WebGL2RenderingContext.UNSIGNED_SHORT;
+    }
+    if (this.data instanceof Uint32Array) {
+      return WebGL2RenderingContext.UNSIGNED_INT;
+    }
+    throw Error('unsupported index type');
   }
 }

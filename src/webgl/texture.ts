@@ -4,15 +4,15 @@ export class Texture implements UniformObject {
   readonly uniformType: UniformVariableType = 'int';
 
   texture: WebGLTexture | null = null;
-  index = NaN;
+  index: number = NaN;
 
   gl: WebGL2RenderingContext | null = null;
   imageSource: TexImageSource | null = null;
 
-  wrapS = WebGL2RenderingContext.CLAMP_TO_EDGE;
-  wrapT = WebGL2RenderingContext.CLAMP_TO_EDGE;
-  minFilter = WebGL2RenderingContext.NEAREST;
-  magFilter = WebGL2RenderingContext.NEAREST;
+  wrapS: number = WebGL2RenderingContext.CLAMP_TO_EDGE;
+  wrapT: number = WebGL2RenderingContext.CLAMP_TO_EDGE;
+  minFilter: number = WebGL2RenderingContext.NEAREST;
+  magFilter: number = WebGL2RenderingContext.NEAREST;
 
   constructor(public url = '') {}
 
@@ -82,7 +82,7 @@ export class Texture implements UniformObject {
     this.index = textureIndex;
   }
 
-  valueOf() {
+  valueOf(): number {
     return this.index;
   }
 

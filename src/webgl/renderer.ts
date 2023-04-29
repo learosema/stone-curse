@@ -37,14 +37,14 @@ export class Renderer {
   render(
     shader: Shader,
     buffers: BufferAttrib[],
-    mode = WebGL2RenderingContext.TRIANGLES,
+    mode: number = WebGL2RenderingContext.TRIANGLES,
     countOverride = NaN,
     updateBuffers = true
   ) {
     const { gl } = this;
     shader.use(gl);
     for (const buffer of buffers) {
-      buffer.use(shader);
+      buffer.use(gl);
       if (updateBuffers) {
         buffer.update();
       }
@@ -52,9 +52,9 @@ export class Renderer {
     }
     const { count, indexType } = BufferAttrib.getCount(buffers);
     if (indexType !== WebGL2RenderingContext.NONE) {
-      gl.drawElements(mode, countOverride || count, indexType, 0);
+      gl.drawElements(mode, countOverride || count, indexType, 0);
     } else {
-      gl.drawArrays(mode, 0, countOverride || count);
+      gl.drawArrays(mode, 0, countOverride || count);
     }
     for (const buffer of buffers) {
       buffer.disable();

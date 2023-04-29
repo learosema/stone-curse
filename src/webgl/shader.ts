@@ -1,6 +1,7 @@
 export type UniformVariableType = 'float' | 'int' | 'matrix';
 export interface UniformObject {
   readonly uniformType?: UniformVariableType;
+  valueOf: () => number;
 }
 
 export type UniformVariable = number | number[] | UniformObject;
@@ -14,12 +15,13 @@ export class Shader {
   constructor(
     public fragmentShader: string,
     public vertexShader: string,
+    // TODO: I remember somehow I need to hardcode attrib locations for using VAOs, I don't use it right now....
     public attribLocations: Record<string, number>|null
   ) {}
 
   clone(): Shader {
     return new Shader(
-      this.fragmentShader, 
+      this.fragmentShader,
       this.vertexShader,
       this.attribLocations
     ).use(this.gl);
@@ -43,7 +45,7 @@ export class Shader {
     return sh;
   }
 
-  private createProgram(vs: WebGLShader, fs: WebGLShader, attribLocations: Record<string, number>|null = null;): WebGLProgram {
+  private createProgram(vs: WebGLShader, fs: WebGLShader, attribLocations: Record<string, number>|null = null): WebGLProgram {
     const { gl } = this;
     if (!gl) {
       throw new Error('no gl context');
@@ -61,7 +63,7 @@ export class Shader {
     gl.useProgram(program);
     return program;
   }
-  
+
   use(gl: WebGL2RenderingContext | null) {
     this.gl = gl;
     if (!gl) {
