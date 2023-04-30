@@ -1,5 +1,8 @@
 type BufferData = Uint8Array | Uint16Array | Uint32Array | Float32Array;
 
+/**
+ * Holds a buffer and associates an attribute with it.
+ */
 export class BufferAttrib {
   buffer: WebGLBuffer | null = null;
   gl: WebGL2RenderingContext | null = null;
@@ -22,12 +25,24 @@ export class BufferAttrib {
       // If the name is not set, imply it's an index buffer
       this.target = WebGL2RenderingContext.ELEMENT_ARRAY_BUFFER;
       this.indexType = this.getIndexType();
+    }
+    this.updateCount();
+  }
+
+  public updateCount(): void {
+    if (this.target === WebGL2RenderingContext.ELEMENT_ARRAY_BUFFER) {
       this.count = this.data?.length || 0;
     } else {
       this.count = Math.floor((this.data?.length || 0) / this.size);
     }
   }
 
+  /**
+   * Retrieves indexType and count
+   * @param buffers
+   * @returns
+   * @deprecated
+   */
   static getCount(buffers: BufferAttrib[]): {
     count: number;
     indexType: number;
@@ -93,6 +108,7 @@ export class BufferAttrib {
     }
     gl.bindBuffer(this.target, this.buffer);
     gl.bufferData(this.target, this.data, this.usage);
+    this.updateCount();
     return this;
   }
 
